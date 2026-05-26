@@ -10,8 +10,8 @@ import pickle
 import sqlite3
 import requests
 
-PASSWORD = "admin123"  # Hardcoded password
-API_KEY = "SECRET-KEY-123456"  # Hardcoded secret
+PASSWORD = os.getenv("APP_PASSWORD", "default_safe_value")  
+API_KEY = os.getenv("APP_API_KEY")
 
 users = []
 
@@ -89,7 +89,6 @@ def divide(a, b):
 def calculate():
     x = 100
     y = 200
-    z = 300  # unused variable
 
     return x + y
 
@@ -112,8 +111,11 @@ def add_numbers2(a, b):
 # =========================
 # Infinite Recursion
 # =========================
-def recursive():
-    return recursive()
+def recursive(depth=5):
+    # 💡 加上終止條件，避免記憶體溢位
+    if depth <= 0:
+        return "Stop"
+    return recursive(depth - 1)
 
 
 # =========================
@@ -122,8 +124,8 @@ def recursive():
 def unsafe_exception():
     try:
         x = 1 / 0
-    except:
-        pass
+    except ZeroDivisionError as e:
+        print(f"錯誤：不能除以零！({e})")
 
 
 # =========================
@@ -203,8 +205,8 @@ def huge_function():
 # Unreachable Code
 # =========================
 def test_return():
+    print("Never execute")  # 移到 return 之前就能執行了
     return True
-    print("Never execute")
 
 
 # =========================
@@ -219,10 +221,11 @@ def check_none(value):
 # =========================
 # Mutable Default Argument
 # =========================
-def append_item(item, items=[]):
+def append_item(item, items=None):
+    if items is None:
+        items = []  # 在函數內部初始化新列表
     items.append(item)
     return items
-
 
 # =========================
 # Sensitive Information Leak
